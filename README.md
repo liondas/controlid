@@ -1,7 +1,5 @@
 ﻿# ControlId
 
----
-
 Exemplo de utilização do SDK de integração RepCid.dll da ControlId para comunicação do relógio de ponto Rep IdClass com aplicações criadas com o Visual Basic 6 ou 5.
 
 Este é um exemplo desenvolvido pela empresa __Liondas Softwares__, produtora do programa para tratamento do cartão de ponto __LdsPonto__.
