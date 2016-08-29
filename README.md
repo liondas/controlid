@@ -28,6 +28,10 @@ O SDK deverá ser solicitado para o fabricante ControlId, no site [www.controlid
 
 ---
 
-Para a comunicação funcionar corretamente, a senha Web do equipamento deverá estar no padrão de fábrica, para isso consulte o manual do equipamento.
+Neste exemplo, além das funções de conexão, foi implementado o controle de erros, que ao meu ver é de grande importância.
+
+Para uma melhor leitura do exemplo, foi dado prioridade para um código limpo e simples, utilizando os nomes padrões dos objetos (form, buttons, labels)
+
+Uma dica, a _senha Web_ do equipamento deverá estar no padrão de fábrica, para isso consulte o manual do equipamento.
 
 Os nomes ControlId, Id Class e RepCid são marcas da empresa ControlId.
