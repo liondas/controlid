@@ -3,23 +3,32 @@ Begin VB.Form Form1
    BackColor       =   &H00FFFFFF&
    BorderStyle     =   1  'Fixed Single
    Caption         =   "ControlID"
-   ClientHeight    =   5895
+   ClientHeight    =   7605
    ClientLeft      =   45
    ClientTop       =   390
    ClientWidth     =   7095
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   5895
+   ScaleHeight     =   7605
    ScaleWidth      =   7095
    StartUpPosition =   2  'CenterScreen
+   Begin VB.CommandButton Command7 
+      Caption         =   "Ler AFD"
+      Height          =   420
+      Left            =   300
+      TabIndex        =   6
+      Top             =   4575
+      Width           =   1650
+   End
    Begin VB.TextBox Text2 
       BackColor       =   &H00E0E0E0&
       BorderStyle     =   0  'None
-      Height          =   5190
+      Height          =   6840
       Left            =   2475
+      Locked          =   -1  'True
       MultiLine       =   -1  'True
-      TabIndex        =   9
+      TabIndex        =   10
       Text            =   "Form1.frx":0000
       Top             =   375
       Width           =   4290
@@ -28,7 +37,7 @@ Begin VB.Form Form1
       Caption         =   "Ler Empregador"
       Height          =   420
       Left            =   300
-      TabIndex        =   8
+      TabIndex        =   5
       Top             =   4125
       Width           =   1650
    End
@@ -36,7 +45,7 @@ Begin VB.Form Form1
       Caption         =   "Ler Informações"
       Height          =   420
       Left            =   300
-      TabIndex        =   7
+      TabIndex        =   4
       Top             =   3675
       Width           =   1650
    End
@@ -44,15 +53,15 @@ Begin VB.Form Form1
       Caption         =   "Sair"
       Height          =   420
       Left            =   300
-      TabIndex        =   5
-      Top             =   4575
+      TabIndex        =   7
+      Top             =   5250
       Width           =   1650
    End
    Begin VB.CommandButton Command3 
       Caption         =   "Ajustar Data e Hora"
       Height          =   420
       Left            =   300
-      TabIndex        =   4
+      TabIndex        =   3
       Top             =   3225
       Width           =   1650
    End
@@ -60,14 +69,14 @@ Begin VB.Form Form1
       Caption         =   "Desconectar"
       Height          =   420
       Left            =   300
-      TabIndex        =   3
+      TabIndex        =   2
       Top             =   2775
       Width           =   1650
    End
    Begin VB.TextBox Text1 
       Height          =   315
       Left            =   300
-      TabIndex        =   1
+      TabIndex        =   0
       Text            =   "192.168.1.200"
       Top             =   1875
       Width           =   1590
@@ -76,7 +85,7 @@ Begin VB.Form Form1
       Caption         =   "Conectar"
       Height          =   420
       Left            =   300
-      TabIndex        =   0
+      TabIndex        =   1
       Top             =   2325
       Width           =   1650
    End
@@ -86,8 +95,8 @@ Begin VB.Form Form1
       Caption         =   "www.liondas.com.br"
       Height          =   240
       Left            =   300
-      TabIndex        =   6
-      Top             =   5475
+      TabIndex        =   9
+      Top             =   7200
       Width           =   1590
    End
    Begin VB.Image Image1 
@@ -110,7 +119,7 @@ Begin VB.Form Form1
       Caption         =   "IP do Equipamento"
       Height          =   240
       Left            =   375
-      TabIndex        =   2
+      TabIndex        =   8
       Top             =   1575
       Width           =   1440
    End
@@ -118,7 +127,7 @@ Begin VB.Form Form1
       BackColor       =   &H00E0E0E0&
       BackStyle       =   1  'Opaque
       BorderColor     =   &H00C0C0C0&
-      Height          =   5490
+      Height          =   7215
       Left            =   2325
       Top             =   225
       Width           =   4590
@@ -136,6 +145,7 @@ Dim rep As New RepCid.RepCid
 Dim er As ErrosRep
 Dim gravou As Boolean
 Dim log As String
+
 
 'Inicio do programa
 Private Sub Form_Load()
@@ -241,6 +251,35 @@ Private Sub Command6_Click()
   End If
 End Sub
 
+'Faz a coleta do AFD a partir do NSR=1
+Private Sub Command7_Click()
+  Dim nArq As Integer, sBuffer As String, bVazio As Boolean, sFile As String, nNsr As Long
+  sFile = App.Path & "\afd.txt"
+  nNsr = 1
+  Mensagem "Recebendo AFD..."
+  If Dir(sFile) <> "" Then Kill sFile
+  If rep.BuscarAFD(nNsr) Then
+    bVazio = True
+    nArq = FreeFile
+    Open sFile For Append As #nArq
+      Do While rep.LerAFD(sBuffer)
+        If Len(sBuffer) > 2 Then
+          bVazio = False
+          Print #nArq, Left(sBuffer, Len(sBuffer) - 2)
+        End If
+      Loop
+    Close #nArq
+    If bVazio Then
+      Mensagem "Nenhum registro AFD encontrado"
+    Else
+      Mensagem "AFD recebido com sucesso"
+    End If
+  Else
+    rep.GetLastLog log
+    Mensagem log
+  End If
+End Sub
+
 'Exibe a mensagem na tela
 Private Sub Mensagem(ByVal sMen As String)
   Text2.Text = sMen & vbCrLf & Text2.Text
@@ -255,6 +294,7 @@ Private Sub ModoConectado()
   Command4.Enabled = False
   Command5.Enabled = True
   Command6.Enabled = True
+  Command7.Enabled = True
 End Sub
 Private Sub ModoDesconectado()
   Command1.Enabled = True
@@ -263,8 +303,8 @@ Private Sub ModoDesconectado()
   Command4.Enabled = True
   Command5.Enabled = False
   Command6.Enabled = False
+  Command7.Enabled = False
 End Sub
-
 
 'If rep.iDClass_GravarEmpregador("111111110001110000", 1, "0", "Teste Empregador", "Teste Endereco", "0", gravou) Then
 '  Label1.Caption = "Comando executado com sucesso"
@@ -272,5 +312,4 @@ End Sub
 '  rep.GetLastLog log
 '  Label1.Caption = log
 'End If
-
 
